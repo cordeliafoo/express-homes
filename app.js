@@ -1,10 +1,11 @@
 var express = require('express')
 var app = express()
-var port = 8000
+var port = 4000
 var mongoose = require('mongoose')
 var dbURI = 'mongodb://localhost/test'
-
-mongoose.connect(dbURI)
+var ObjectID = require('mongodb').ObjectID;
+var conn = mongoose.connection
+var connect = mongoose.connect(dbURI)
 
 var Home = require('./models/home')
 
@@ -28,8 +29,21 @@ app.get('/', function (req, res) {
 app.post('/', function(req, res){
   //talk to db
   //insert data into db
-  console.log(req.body);
+
   res.send(req.body)
+  var formData = req.body
+
+  var data = {
+    address: formData.address,
+    sqft: formData.SqFt,
+    bedrooms: formData.Bedrooms,
+    baths: formData.Baths,
+    price: formData.Price
+  }
+
+  console.log(data);
+  conn.collection('homes').insert(data)
+
 })
 
 app.listen(port, function (err) {
